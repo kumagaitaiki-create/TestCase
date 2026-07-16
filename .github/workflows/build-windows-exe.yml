@@ -1,0 +1,50 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+    inputs:
+      appVersion:
+        description: "Application version (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
+      appName:
+        description: "Application name"
+        required: true
+        default: "CobolAssistant"
+
+permissions:
+  contents: read
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install WiX Toolset
+        shell: powershell
+        run: |
+          choco install wixtoolset --no-progress -y
+
+      - name: Build and package EXE
+        shell: powershell
+        run: |
+          powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-all.ps1 `
+            -AppName "${{ github.event.inputs.appName }}" `
+            -AppVersion "${{ github.event.inputs.appVersion }}" `
+            -Vendor "${{ github.repository_owner }}"
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: dist/*.exe
+          if-no-files-found: error
