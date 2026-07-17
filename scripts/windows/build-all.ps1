@@ -1,6 +1,3 @@
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
-
 param(
     [string]$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path,
     [string]$AppName = "CobolAssistant",
@@ -9,6 +6,9 @@ param(
     [string]$MainClass = "Main",
     [string]$JarName = "CobolAssistant.jar"
 )
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
 Write-Host "[0/4] Full packaging flow started"
 

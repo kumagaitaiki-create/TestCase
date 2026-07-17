@@ -1,11 +1,11 @@
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
-
 param(
     [string]$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path,
     [string]$JarName = "CobolAssistant.jar",
     [string]$RuntimeDirName = "runtime"
 )
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
 Write-Host "[2/4] Build runtime image started"
 Write-Host "ProjectRoot: $ProjectRoot"

@@ -1,11 +1,11 @@
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
-
 param(
     [string]$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path,
     [string]$MainClass = "Main",
     [string]$JarName = "CobolAssistant.jar"
 )
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
 Write-Host "[1/4] Build JAR started"
 Write-Host "ProjectRoot: $ProjectRoot"
