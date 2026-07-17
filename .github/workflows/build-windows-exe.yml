@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Windows App Image
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  build-exe:
+  build-app-image:
     runs-on: windows-latest
 
     steps:
@@ -30,21 +30,17 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Install WiX Toolset
-        shell: bash
-        run: choco install wixtoolset --no-progress -y
-
-      - name: Build and package EXE with Maven
+      - name: Build portable app-image with Maven
         shell: bash
         run: >-
-          mvn -B clean package -DskipTests -Pwindows-exe
+          mvn -B clean package -DskipTests -Pwindows-app-image
           -Dapp.name="${{ github.event.inputs.appName }}"
           -Dapp.version="${{ github.event.inputs.appVersion }}"
           -Dapp.vendor="${{ github.repository_owner }}"
 
-      - name: Upload EXE artifact
+      - name: Upload app-image artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-exe
-          path: target/dist/*.exe
+          name: windows-app-image
+          path: target/dist/**
           if-no-files-found: error

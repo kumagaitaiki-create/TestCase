@@ -1,17 +1,16 @@
 # TestCase
 
-Windows EXE packaging with Maven and jpackage
-=============================================
+Windows portable packaging with Maven and jpackage
+===================================================
 
-This repository now builds the Swing app into a Windows EXE through Maven. The GitHub Actions workflow runs `mvn clean package` on a Windows runner and then uses `jpackage` from the JDK.
+This repository now builds the Swing app into a portable Windows app-image through Maven. The GitHub Actions workflow runs `mvn clean package` on a Windows runner and then uses `jpackage` from the JDK.
 
 Prerequisites
 -------------
 
 1. JDK 17 or later
 2. Maven 3.9 or later
-3. Windows runner or local Windows machine for the EXE step
-4. WiX Toolset on Windows when `jpackage` requests it
+3. Windows runner or local Windows machine for the app-image step
 
 Local build
 -----------
@@ -22,13 +21,13 @@ Build the JAR only:
 mvn -B clean package -DskipTests
 ```
 
-Build the Windows EXE on Windows:
+Build the portable app-image on Windows:
 
 ```bash
-mvn -B clean package -DskipTests -Pwindows-exe
+mvn -B clean package -DskipTests -Pwindows-app-image
 ```
 
-The EXE output is written to `target/dist/`.
+The app-image output is written to `target/dist/`.
 
 GitHub Actions
 --------------
@@ -48,5 +47,5 @@ How to run:
 
 Notes:
 
-- The workflow installs JDK 21 and WiX Toolset on the `windows-latest` runner.
-- The EXE artifact is uploaded from `target/dist/*.exe`.
+- The workflow installs JDK 21 on the `windows-latest` runner.
+- The portable artifact is uploaded from `target/dist/**`.
