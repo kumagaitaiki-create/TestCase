@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.awt.CardLayout;
+import java.awt.Color;
+
 import java.util.List;
 
 public class MainFrame extends JFrame{
@@ -24,7 +26,7 @@ public class MainFrame extends JFrame{
     private final JTextField oldFileField;
     private final JTextField newFileField;
     private final JTextField questionField;
-    private final JTextField memoField;
+    private final JTextArea memoArea;
 
     private final JTextArea parseArea;
     private final JTextArea diffArea;
@@ -127,13 +129,25 @@ public class MainFrame extends JFrame{
         questionPanel.add(questionField);
 
 
-        JPanel memoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel memoPanel = new JPanel(new BorderLayout());
         JLabel memoLabel = new JLabel("メモ帳");
-        memoField = new JTextField(50);
-        memoField.setText("メモ帳としてご利用ください");
-        memoPanel.add(memoLabel);
-        memoPanel.add(memoField);
 
+        //20260717 ADD START
+        memoArea = new JTextArea(5,50);
+
+        memoArea.setRows(8);
+        memoArea.setColumns(50);
+        memoArea.setLineWrap(true);
+        memoArea.setWrapStyleWord(true);
+
+        JScrollPane memoScroll = new JScrollPane(memoArea);
+
+        //memoField.setText("メモ帳としてご利用ください");
+        //memoPanel.add(memoLabel);
+        //memoPanel.add(memoField);
+        memoPanel.add(memoLabel, BorderLayout.NORTH);
+        memoPanel.add(memoScroll, BorderLayout.CENTER);
+        //20260717 ADD END
 
         topPanel.add(oldFilePanel);
         topPanel.add(newFilePanel);
@@ -142,6 +156,13 @@ public class MainFrame extends JFrame{
 
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton analyzeButton = new JButton("解析実行");
+        
+        //20260717 ADD START
+        analyzeButton.setBackground(new Color(255,120,120));
+        analyzeButton.setForeground(Color.WHITE);
+        analyzeButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+        //20260717 ADD END
+
         actionPanel.add(analyzeButton);
         actionPanel.add(parseButton);
         actionPanel.add(diffButton);
@@ -285,7 +306,7 @@ public class MainFrame extends JFrame{
     //2026-07-16 CHG-END
         StringBuilder sb = new StringBuilder();
         sb.append("========== COBOL解析結果 ==========").append(System.lineSeparator());
-        sb.append("1. プログラム名").append(System.lineSeparator());
+        sb.append("1. （新）プログラム名").append(System.lineSeparator());
         sb.append("- ").append(result.programName()).append(System.lineSeparator()).append(System.lineSeparator());
 
         sb.append("2. CALL先一覧").append(System.lineSeparator());
