@@ -1,107 +1,37 @@
 # TestCase
 
-Windows EXE packaging with jpackage
-===================================
+Windows EXE packaging with Maven and jpackage
+=============================================
 
-This repository now includes PowerShell scripts for packaging the Swing app as a Windows EXE installer.
-No Java source changes are required for this flow.
+This repository now builds the Swing app into a Windows EXE through Maven. The GitHub Actions workflow runs `mvn clean package` on a Windows runner and then uses `jpackage` from the JDK.
 
-Added files
+Prerequisites
+-------------
+
+1. JDK 17 or later
+2. Maven 3.9 or later
+3. Windows runner or local Windows machine for the EXE step
+4. WiX Toolset on Windows when `jpackage` requests it
+
+Local build
 -----------
 
-- scripts/windows/build-jar.ps1
-- scripts/windows/build-runtime.ps1
-- scripts/windows/package-exe.ps1
-- scripts/windows/build-all.ps1
-- packaging/README.txt
+Build the JAR only:
 
-Prerequisites (Windows)
------------------------
-
-1. JDK 17 or later (must include javac, jar, jdeps, jlink, jpackage)
-2. PowerShell
-3. Optional: WiX Toolset (only if jpackage requests it)
-
-Quick start (recommended)
--------------------------
-
-Run all steps in order (compile -> jar -> runtime -> exe):
-
-```powershell
-cd <your-local-path>\TestCase
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-all.ps1
+```bash
+mvn -B clean package -DskipTests
 ```
 
-Output installer:
+Build the Windows EXE on Windows:
 
-- dist\CobolAssistant-1.0.0.exe (or similar name)
-
-Step-by-step commands
----------------------
-
-1) Build executable JAR
-
-```powershell
-cd <your-local-path>\TestCase
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-jar.ps1
+```bash
+mvn -B clean package -DskipTests -Pwindows-exe
 ```
 
-2) Build bundled runtime image (for PCs without Java)
+The EXE output is written to `target/dist/`.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-runtime.ps1
-```
-
-3) Package EXE installer
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\package-exe.ps1
-```
-
-Useful customization examples
------------------------------
-
-```powershell
-# Change app name/version/vendor at packaging time
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-all.ps1 `
-  -AppName "CobolAssistant" `
-  -AppVersion "1.2.0" `
-  -Vendor "MyCompany"
-```
-
-```powershell
-# Change main class or jar name if needed
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-all.ps1 `
-  -MainClass "Main" `
-  -JarName "CobolAssistant.jar"
-```
-
-Optional app icon
------------------
-
-Place icon at packaging/app.ico.
-If present, package-exe.ps1 automatically uses it.
-If absent, packaging still works with default icon.
-
-Troubleshooting
----------------
-
-1. Error: path not found when using cd C:\work\TestCase
-	- Replace with your actual local path where this repository exists.
-
-2. Error: Unable to access jarfile ...
-	- Check jar name under build directory.
-
-3. Error from jpackage mentioning WiX
-	- Install WiX Toolset, reopen terminal, retry package-exe.ps1.
-
-4. Swing app cannot open in Linux dev container
-	- This environment is headless. Run the EXE/JAR verification on Windows GUI environment.
-
-Build EXE with GitHub Actions
------------------------------
-
-You can build a Windows EXE without installing JDK locally by using GitHub Actions.
+GitHub Actions
+--------------
 
 Workflow file:
 
@@ -118,5 +48,5 @@ How to run:
 
 Notes:
 
-- The workflow installs JDK 21 and WiX Toolset on windows-latest runner.
-- Output EXE is uploaded as an artifact from dist/*.exe.
+- The workflow installs JDK 21 and WiX Toolset on the `windows-latest` runner.
+- The EXE artifact is uploaded from `target/dist/*.exe`.

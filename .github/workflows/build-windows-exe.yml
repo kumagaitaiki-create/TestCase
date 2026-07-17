@@ -23,28 +23,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK 21 with Maven cache
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
+          cache: maven
 
       - name: Install WiX Toolset
-        shell: powershell
-        run: |
-          choco install wixtoolset --no-progress -y
+        shell: bash
+        run: choco install wixtoolset --no-progress -y
 
-      - name: Build and package EXE
-        shell: powershell
-        run: |
-          powershell -ExecutionPolicy Bypass -File .\scripts\windows\build-all.ps1 `
-            -AppName "${{ github.event.inputs.appName }}" `
-            -AppVersion "${{ github.event.inputs.appVersion }}" `
-            -Vendor "${{ github.repository_owner }}"
+      - name: Build and package EXE with Maven
+        shell: bash
+        run: >-
+          mvn -B clean package -DskipTests -Pwindows-exe
+          -Dapp.name="${{ github.event.inputs.appName }}"
+          -Dapp.version="${{ github.event.inputs.appVersion }}"
+          -Dapp.vendor="${{ github.repository_owner }}"
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
-          path: dist/*.exe
+          path: target/dist/*.exe
           if-no-files-found: error
