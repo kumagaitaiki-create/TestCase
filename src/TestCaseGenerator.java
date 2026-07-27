@@ -35,7 +35,7 @@ public class TestCaseGenerator {
         applyPerformRules(context, viewpoints);
 
         return buildOutput(viewpoints);
-    }
+
 
     private Map<String, List<String>> initializeCategories() {
         Map<String, List<String>> categories = new LinkedHashMap<>();

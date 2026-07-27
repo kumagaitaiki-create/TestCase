@@ -22,7 +22,7 @@ import java.awt.Color;
 import java.util.List;
 
 public class MainFrame extends JFrame{
-    public boolean flagDiff = false;
+    public boolean difFlag = false;
     private final JTextField oldFileField;
     private final JTextField newFileField;
     private final JTextField questionField;
@@ -214,6 +214,8 @@ public class MainFrame extends JFrame{
         
         int maxLine = Math.max(oldLines.size(),newLines.size());
 
+        difFlag = false;
+
         for (int i = 0; i < maxLine; i++) {
 
             String oldLine =
@@ -245,7 +247,7 @@ public class MainFrame extends JFrame{
 
                 result.append(System.lineSeparator());
 
-                flagDiff = true;
+                difFlag = true;
             }
         }
         if (result.length() == 0) {
@@ -260,19 +262,34 @@ public class MainFrame extends JFrame{
         String newPath = newFileField.getText();
         String question = questionField.getText();
 
-        if (oldPath == null || oldPath.isBlank()) {
-            JOptionPane.showMessageDialog(this, "解析する旧ファイルを選択してください。", "入力エラー", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        //20260727 CHG-START
+        //if (oldPath == null || oldPath.isBlank()) {
+        //    JOptionPane.showMessageDialog(this, "解析する旧ファイルを選択してください。", "入力エラー", JOptionPane.WARNING_MESSAGE);
+        //    return;
+        //}
+
+        //20260727 CHG-END  
         if (newPath == null || newPath.isBlank()){
             JOptionPane.showMessageDialog(this, "解析する新ファイルを選択してください。", "入力エラー", JOptionPane.WARNING_MESSAGE);
             return;
         }
         try {
-            File oldFile = new File(oldPath);
+            //20260727 CHG-START
+            //File oldFile = new File(oldPath);
             File newFile = new File(newPath);
 
-            String diffResult = compFiles(oldFile,newFile);
+            String diffResult;
+
+
+            if (!oldPath.isBlank()){
+            File oldFile = new File(oldPath);
+            diffResult = compFiles(oldFile,newFile);
+        }
+            else {
+            diffResult = "旧ファイルが選択されていないため、差分比較はスキップされました。";
+        }
+            //String diffResult = compFiles(oldFile,newFile);
+            //20260727 CHG-END
 
             //新ファイルのみ解析結果が表示される。旧ファイルも表示するか検討。
             String source = FileUtil.readFile(newPath);
