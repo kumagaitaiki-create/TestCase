@@ -111,21 +111,32 @@ public class MainFrame extends JFrame{
         JPanel oldFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel newFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton oldButton = new JButton("旧ファイル選択");
-        JButton clearOldButton = new JButton("クリア");
         JButton newButton = new JButton("新ファイル選択");
-        JButton clearNewButton = new JButton("クリア");
         oldFileField = new JTextField(56);
         oldFileField.setEditable(false);
         newFileField = new JTextField(56);
         newFileField.setEditable(false);
+
+        //20260728 ADD START
+        JButton clearOldButton = new JButton("クリア");
+        JButton clearNewButton = new JButton("クリア");
+        //20260728 ADD END
+
         oldFilePanel.add(oldButton);
-        oldFilePanel.add(clearOldButton);
         oldFilePanel.add(oldFileField);
+
+        //20260728 ADD START
+        oldFilePanel.add(clearOldButton);
+        //20260728 ADD END
+        
         clearOldButton.addActionListener(e -> oldFileField.setText(""));
         clearNewButton.addActionListener(e -> newFileField.setText(""));
         newFilePanel.add(newButton);
-        newFilePanel.add(clearNewButton);
         newFilePanel.add(newFileField);
+
+        //20260728 ADD START
+        newFilePanel.add(clearNewButton);
+        //20260728 ADD END
 
         JPanel questionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel questionLabel = new JLabel("質問入力:");
