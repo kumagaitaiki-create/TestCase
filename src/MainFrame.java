@@ -45,7 +45,7 @@ public class MainFrame extends JFrame{
 
 
         //タイトルや画面サイズなどの初期設定
-        setTitle("COBOL Assistant(新規プログラム用)");
+        setTitle("COBOL Assistant ver-1.0");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(980, 700);
         setLocationRelativeTo(null);
@@ -111,14 +111,20 @@ public class MainFrame extends JFrame{
         JPanel oldFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel newFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton oldButton = new JButton("旧ファイル選択");
+        JButton clearOldButton = new JButton("クリア");
         JButton newButton = new JButton("新ファイル選択");
+        JButton clearNewButton = new JButton("クリア");
         oldFileField = new JTextField(56);
         oldFileField.setEditable(false);
         newFileField = new JTextField(56);
         newFileField.setEditable(false);
         oldFilePanel.add(oldButton);
+        oldFilePanel.add(clearOldButton);
         oldFilePanel.add(oldFileField);
+        clearOldButton.addActionListener(e -> oldFileField.setText(""));
+        clearNewButton.addActionListener(e -> newFileField.setText(""));
         newFilePanel.add(newButton);
+        newFilePanel.add(clearNewButton);
         newFilePanel.add(newFileField);
 
         JPanel questionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public class CobolParser {
 
-    private static final List<String> SUMMARY_START_KEYWORDS = List.of("概要", "処理概要", "機能概要");
+    private static final List<String> SUMMARY_START_KEYWORDS = List.of("変    更    履    歴", "変　　更　　履　　歴");
     private static final List<String> SUMMARY_END_KEYWORDS = List.of("入力", "出力", "更新履歴", "変更履歴", "処理内容", "注意事項");
 
     private static final Pattern PROGRAM_ID_PATTERN = Pattern.compile("(?im)^\\s*PROGRAM-ID\\.\\s+([A-Z0-9_-]+)");
