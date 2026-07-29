@@ -10,7 +10,7 @@ public class SummaryGenerator {
 
     private static final int NO_OPERATION_COUNT = 0;
 
-    public String generateSummary(CobolParser.ParseResult result, String question) {
+    public String generateSummary(CobolParser.ParseResult result) {
         // 追加機能:
         // 概要抽出機能
         String extractedOverview = result.extractedOverview();
@@ -18,10 +18,10 @@ public class SummaryGenerator {
             return extractedOverview;
         }
 
-        return generateSummaryFromParseResult(result, question);
+        return generateSummaryFromParseResult(result);
     }
 
-    private String generateSummaryFromParseResult(CobolParser.ParseResult result, String question) {
+    private String generateSummaryFromParseResult(CobolParser.ParseResult result) { 
         Map<String, Integer> ops = result.operationCounts();
         List<String> elements = new ArrayList<>();
 
@@ -45,10 +45,12 @@ public class SummaryGenerator {
         sb.append(System.lineSeparator());
         sb.append(buildOperationSummary(ops));
 
-        if (question != null && !question.isBlank()) {
-            sb.append(System.lineSeparator());
-            sb.append("質問への補足: ").append(question).append(" の観点で上記要素を重点確認してください。");
-        }
+        //20260729 CHG-START
+        //if (question != null && !question.isBlank()) {
+        //    sb.append(System.lineSeparator());
+        //    sb.append("質問への補足: ").append(question).append(" の観点で上記要素を重点確認してください。");
+        //}
+        //20260729 CHG-END
 
         return sb.toString();
     }

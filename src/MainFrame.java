@@ -260,7 +260,7 @@ public class MainFrame extends JFrame{
             String source = FileUtil.readFile(newPath);
             CobolParser.ParseResult parseResult = cobolParser.parse(source);
             
-            String summary = summaryGenerator.generateSummary(parseResult, question);
+            String summary = summaryGenerator.generateSummary(parseResult);
             String testViewpoints = testCaseGenerator.generateViewpoints(parseResult);
 
             //20260716 CHG-START
