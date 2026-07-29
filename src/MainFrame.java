@@ -22,10 +22,11 @@ import java.awt.Color;
 import java.util.List;
 
 public class MainFrame extends JFrame{
-    public boolean difFlag = false;
     private final JTextField oldFileField;
     private final JTextField newFileField;
-    private final JTextField questionField;
+    //20260728 CHG-START
+    //private final JTextField questionField;
+    //20260728 CHG-END
     private final JTextArea memoArea;
 
     private final JTextArea parseArea;
@@ -38,10 +39,12 @@ public class MainFrame extends JFrame{
     private final CobolParser cobolParser;
     private final SummaryGenerator summaryGenerator;
     private final TestCaseGenerator testCaseGenerator;
+    private final Difference difference;
     public MainFrame(){
         this.cobolParser = new CobolParser();
         this.summaryGenerator = new SummaryGenerator();
         this.testCaseGenerator = new TestCaseGenerator();
+        this.difference = new Difference();
 
 
         //タイトルや画面サイズなどの初期設定
@@ -85,12 +88,9 @@ public class MainFrame extends JFrame{
         cardPanel.add(testPanel,"TEST");
 
         //切り替えボタン
-        JButton parseButton =
-            new JButton("解析結果");
-        JButton diffButton =
-            new JButton("差分結果");
-        JButton testButton =
-            new JButton("試験観点");
+        JButton parseButton = new JButton("解析結果");
+        JButton diffButton = new JButton("差分結果");
+        JButton testButton = new JButton("試験観点");
 
         //ボタンクリック時
         parseButton.addActionListener(e -> cardLayout.show(cardPanel,"PARSE"));
@@ -110,8 +110,8 @@ public class MainFrame extends JFrame{
 
         JPanel oldFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel newFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton oldButton = new JButton("旧ファイル選択");
-        JButton newButton = new JButton("新ファイル選択");
+        JButton oldButton = new JButton("旧ファイル選択(任意)");
+        JButton newButton = new JButton("新ファイル選択(必須)");
         oldFileField = new JTextField(56);
         oldFileField.setEditable(false);
         newFileField = new JTextField(56);
@@ -128,7 +128,7 @@ public class MainFrame extends JFrame{
         //20260728 ADD START
         oldFilePanel.add(clearOldButton);
         //20260728 ADD END
-        
+
         clearOldButton.addActionListener(e -> oldFileField.setText(""));
         clearNewButton.addActionListener(e -> newFileField.setText(""));
         newFilePanel.add(newButton);
@@ -138,27 +138,26 @@ public class MainFrame extends JFrame{
         newFilePanel.add(clearNewButton);
         //20260728 ADD END
 
-        JPanel questionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel questionLabel = new JLabel("質問入力:");
-        questionField = new JTextField(64);
-        questionField.setText("このCOBOLの処理概要を教えてください");
-        questionPanel.add(questionLabel);
-        questionPanel.add(questionField);
+        //20260728 CHG-START
+        //JPanel questionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        //JLabel questionLabel = new JLabel("質問入力:");
+        //questionField = new JTextField(64);
+        //questionField.setText("このCOBOLの処理概要を教えてください");
+        //questionPanel.add(questionLabel);
+        //questionPanel.add(questionField);
+        //20260728 CHG-END
 
 
         JPanel memoPanel = new JPanel(new BorderLayout());
         JLabel memoLabel = new JLabel("メモ帳");
 
         //20260717 ADD START
-        memoArea = new JTextArea(5,50);
-
-        memoArea.setRows(8);
-        memoArea.setColumns(50);
+        memoArea = new JTextArea(4,32);
         memoArea.setLineWrap(true);
         memoArea.setWrapStyleWord(true);
 
         JScrollPane memoScroll = new JScrollPane(memoArea);
-
+        
         //memoField.setText("メモ帳としてご利用ください");
         //memoPanel.add(memoLabel);
         //memoPanel.add(memoField);
@@ -168,7 +167,7 @@ public class MainFrame extends JFrame{
 
         topPanel.add(oldFilePanel);
         topPanel.add(newFilePanel);
-        topPanel.add(questionPanel);
+        //topPanel.add(questionPanel);
         topPanel.add(memoPanel);
 
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -222,62 +221,11 @@ public class MainFrame extends JFrame{
             newFileField.setText(file.getAbsolutePath());
         }
     }
-    private String compFiles(File oldFile, File newFile) throws IOException {
-        List<String> oldLines = Files.readAllLines(oldFile.toPath());
-        List<String> newLines = Files.readAllLines(newFile.toPath());
-
-        StringBuilder result = new StringBuilder();
-
-        
-        int maxLine = Math.max(oldLines.size(),newLines.size());
-
-        difFlag = false;
-
-        for (int i = 0; i < maxLine; i++) {
-
-            String oldLine =
-                i < oldLines.size()
-                ? oldLines.get(i)
-                : "";
-
-            String newLine =
-                i < newLines.size()
-                ? newLines.get(i)
-                : "";
-
-            if (!oldLine.equals(newLine)) {
-
-                result.append("【差分あり】")
-                  .append(System.lineSeparator());
-
-                result.append("行番号 : ")
-                  .append(i + 1)
-                  .append(System.lineSeparator());
-
-                result.append("旧 : ")
-                  .append(oldLine)
-                  .append(System.lineSeparator());
-
-                result.append("新 : ")
-                  .append(newLine)
-                  .append(System.lineSeparator());
-
-                result.append(System.lineSeparator());
-
-                difFlag = true;
-            }
-        }
-        if (result.length() == 0) {
-            result.append("差分はありません。");
-        }
-
-        return result.toString();
-    }
 
     private void onAnalyze() {
         String oldPath = oldFileField.getText();
         String newPath = newFileField.getText();
-        String question = questionField.getText();
+        //String question = questionField.getText();
 
         //20260727 CHG-START
         //if (oldPath == null || oldPath.isBlank()) {
@@ -300,7 +248,7 @@ public class MainFrame extends JFrame{
 
             if (!oldPath.isBlank()){
             File oldFile = new File(oldPath);
-            diffResult = compFiles(oldFile,newFile);
+            diffResult = difference.compFiles(oldFile,newFile);
         }
             else {
             diffResult = "旧ファイルが選択されていないため、差分比較はスキップされました。";
@@ -308,7 +256,7 @@ public class MainFrame extends JFrame{
             //String diffResult = compFiles(oldFile,newFile);
             //20260727 CHG-END
 
-            //新ファイルのみ解析結果が表示される。旧ファイルも表示するか検討。
+            //新ファイルのみ解析結果が表示される。旧ファイルも表示するか検討。->旧ファイルも表示せず。
             String source = FileUtil.readFile(newPath);
             CobolParser.ParseResult parseResult = cobolParser.parse(source);
             
@@ -382,10 +330,17 @@ public class MainFrame extends JFrame{
         }
         sb.append(System.lineSeparator());
 
-        sb.append("5. 処理概要").append(System.lineSeparator());
-        sb.append(summary).append(System.lineSeparator()).append(System.lineSeparator());
+        sb.append("5. 変更履歴").append(System.lineSeparator());
 
+        //20260728 CHG-START
+        if (CobolParser.lineFlag == true){
+          sb.append(summary).append(System.lineSeparator()).append(System.lineSeparator());
+        }
+        else {
+            sb.append("変更履歴抽出機能により、変更履歴を特定できませんでした。特定のキーワードを入れてください。").append(System.lineSeparator()).append(System.lineSeparator());
+        }
         return sb.toString();
+        //20260728 CHG-END
     }
     //2026-0716 ADD-START
     private String buildOutput2(String diffResult) {

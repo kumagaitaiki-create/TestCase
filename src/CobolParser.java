@@ -30,6 +30,7 @@ public class CobolParser {
     private static final Pattern COPY_PATTERN = Pattern.compile("(?im)\\bCOPY\\s+([A-Z0-9_-]+)");
     private static final Pattern SELECT_PATTERN = Pattern.compile("(?im)^\\s*SELECT\\s+([A-Z0-9_-]+)");
     private static final Pattern FD_PATTERN = Pattern.compile("(?im)^\\s*FD\\s+([A-Z0-9_-]+)");
+    public static boolean lineFlag;
 
     public ParseResult parse(String source) {
         if (source == null || source.isBlank()) {
@@ -74,10 +75,18 @@ public class CobolParser {
     }
 
     private int findStartLineIndex(List<String> lines) {
+        // 20260728 ADD START
+        CobolParser.lineFlag = false;
+        // 20260728 ADD END
+
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i).trim();
             if (containsAnyKeyword(line, SUMMARY_START_KEYWORDS)) {
-                return i;
+                // 20260728 ADD START
+                CobolParser.lineFlag = true;
+                // 20260728 ADD END
+
+                return i; 
             }
         }
         return -1;
