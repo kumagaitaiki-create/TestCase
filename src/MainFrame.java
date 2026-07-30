@@ -28,6 +28,7 @@ public class MainFrame extends JFrame{
     //private final JTextField questionField;
     //20260728 CHG-END
     private final JTextArea memoArea;
+    private final JTextField documentField;
 
     private final JTextArea parseArea;
     private final JTextArea diffArea;
@@ -40,12 +41,14 @@ public class MainFrame extends JFrame{
     private final SummaryGenerator summaryGenerator;
     private final TestCaseGenerator testCaseGenerator;
     private final Difference difference;
+
+    private CobolParser.ParseResult lastParseResult;
+
     public MainFrame(){
         this.cobolParser = new CobolParser();
         this.summaryGenerator = new SummaryGenerator();
         this.testCaseGenerator = new TestCaseGenerator();
         this.difference = new Difference();
-
 
         //タイトルや画面サイズなどの初期設定
         setTitle("COBOL Assistant ver-1.0");
@@ -113,9 +116,9 @@ public class MainFrame extends JFrame{
         JButton oldButton = new JButton("旧ファイル選択(任意)");
         JButton newButton = new JButton("新ファイル選択(必須)");
         oldFileField = new JTextField(56);
-        oldFileField.setEditable(false);
+        oldFileField.setEditable(true);
         newFileField = new JTextField(56);
-        newFileField.setEditable(false);
+        newFileField.setEditable(true);
 
         //20260728 ADD START
         JButton clearOldButton = new JButton("クリア");
@@ -147,6 +150,16 @@ public class MainFrame extends JFrame{
         //questionPanel.add(questionField);
         //20260728 CHG-END
 
+        //20260730 ADD START
+        JPanel documentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton documentButton = new JButton("クリア");
+        documentField = new JTextField(56);
+        documentField.setEditable(true);
+        documentButton.addActionListener(e -> documentField.setText(""));
+        documentPanel.add(documentField);
+        documentPanel.add(documentButton);
+        //20260730 ADD END
+
 
         JPanel memoPanel = new JPanel(new BorderLayout());
         JLabel memoLabel = new JLabel("メモ帳");
@@ -168,6 +181,9 @@ public class MainFrame extends JFrame{
         topPanel.add(oldFilePanel);
         topPanel.add(newFilePanel);
         //topPanel.add(questionPanel);
+        //20260730 ADD START
+        topPanel.add(documentPanel);
+        //20260730 ADD END
         topPanel.add(memoPanel);
 
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -259,7 +275,9 @@ public class MainFrame extends JFrame{
             //新ファイルのみ解析結果が表示される。旧ファイルも表示するか検討。->旧ファイルも表示せず。
             String source = FileUtil.readFile(newPath);
             CobolParser.ParseResult parseResult = cobolParser.parse(source);
+            this.lastParseResult = parseResult;
             
+            onSearchDocuments();
             String summary = summaryGenerator.generateSummary(parseResult);
             String testViewpoints = testCaseGenerator.generateViewpoints(parseResult);
 
@@ -281,6 +299,28 @@ public class MainFrame extends JFrame{
             JOptionPane.showMessageDialog(this, "予期しないエラーが発生しました: " + ex.getMessage(), "システムエラー", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    //20260730 ADD START
+    private void onSearchDocuments() {
+        String documentPath = documentField.getText();
+        if (documentPath == null || documentPath.isBlank()){
+            JOptionPane.showMessageDialog(this, "解析するプログラム設計書がありません", "検索エラー", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (lastParseResult.programName() != null && !lastParseResult.programName().isBlank()) {
+            List<File> foundFiles = DocumentReader.findFiles(new File(documentPath),lastParseResult.programName());
+            if (foundFiles.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "関連ドキュメントは見つかりませんでした。", "検索結果", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                StringBuilder message = new StringBuilder("関連ドキュメントが見つかりました:\n");
+                for (File file : foundFiles) {
+                    message.append(file.getAbsolutePath()).append("\n");
+                }
+                JOptionPane.showMessageDialog(this, message.toString(), "検索結果", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+    //20260730 ADD END
 
     //2026-07-16 CHG-START
     //private String buildOutput(CobolParser.ParseResult result, String summary, String diffResult,String testViewpoints) {
