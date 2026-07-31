@@ -152,10 +152,12 @@ public class MainFrame extends JFrame{
 
         //20260730 ADD START
         JPanel documentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel documentLabel = new JLabel("ファイルパス入力:");
         JButton documentButton = new JButton("クリア");
         documentField = new JTextField(56);
         documentField.setEditable(true);
         documentButton.addActionListener(e -> documentField.setText(""));
+        documentPanel.add(documentLabel);
         documentPanel.add(documentField);
         documentPanel.add(documentButton);
         //20260730 ADD END
