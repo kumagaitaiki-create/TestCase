@@ -1,0 +1,10 @@
+Main.class
+SummaryGenerator.class
+Difference.class
+TestCaseGenerator$RuleContext.class
+DocumentReader.class
+TestCaseGenerator.class
+FileUtil.class
+CobolParser$ParseResult.class
+MainFrame.class
+CobolParser.class

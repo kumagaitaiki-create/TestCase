@@ -18,10 +18,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.util.prefs.Preferences;
 
 import java.util.List;
 
 public class MainFrame extends JFrame{
+    //20260731 ADD START
+    private final Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
+    //20260731 ADD END
     private final JTextField oldFileField;
     private final JTextField newFileField;
     //20260728 CHG-START
@@ -152,15 +156,22 @@ public class MainFrame extends JFrame{
 
         //20260730 ADD START
         JPanel documentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel documentLabel = new JLabel("ファイルパス入力:");
+        JLabel documentLabel = new JLabel("ファイルパス:");
         JButton documentButton = new JButton("クリア");
         documentField = new JTextField(56);
         documentField.setEditable(true);
+
+        //20260731 ADD START
+        oldFileField.setText(prefs.get("oldFilePath", ""));
+        newFileField.setText(prefs.get("newFilePath", ""));
+        documentField.setText(prefs.get("documentPath", ""));
+        //20260731 ADD END
+
         documentButton.addActionListener(e -> documentField.setText(""));
         documentPanel.add(documentLabel);
         documentPanel.add(documentField);
         documentPanel.add(documentButton);
-        //20260730 ADD END
+        //20260730 ADD END  
 
 
         JPanel memoPanel = new JPanel(new BorderLayout());
@@ -241,6 +252,14 @@ public class MainFrame extends JFrame{
     }
 
     private void onAnalyze() {
+
+        //20260731 ADD START
+        prefs.put("oldFilePath", oldFileField.getText());
+        prefs.put("newFilePath", newFileField.getText());
+        prefs.put("documentPath", documentField.getText());
+        prefs.put("documentPath",documentField.getText());
+        //20260731 ADD END
+
         String oldPath = oldFileField.getText();
         String newPath = newFileField.getText();
         //String question = questionField.getText();
